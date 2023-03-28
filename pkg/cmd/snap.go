@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"math/rand"
 	"strings"
 	"time"
@@ -11,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 var commandUse = "%[1]s-snap [flags]"
@@ -25,22 +26,19 @@ var commandExample = `
 `
 
 type SnapOptions struct {
-	force     bool
-	verbosity int
+	Namespace string
+	Force     bool
+	Verbosity int
 
-	configFlags *genericclioptions.ConfigFlags
-	genericclioptions.IOStreams
+	In  io.Reader
+	Out io.Writer
 }
 
-func NewSnapOptions(streams genericclioptions.IOStreams) *SnapOptions {
-	return &SnapOptions{
-		configFlags: genericclioptions.NewConfigFlags(true),
-		IOStreams:   streams,
+func NewSnapCmd(in io.Reader, out io.Writer, version string) *cobra.Command {
+	o := &SnapOptions{
+		In:  in,
+		Out: out,
 	}
-}
-
-func NewSnapCmd(streams genericclioptions.IOStreams, version string) *cobra.Command {
-	o := NewSnapOptions(streams)
 
 	cmd := &cobra.Command{
 		Use:          fmt.Sprintf(commandUse, "kubectl"),
@@ -53,24 +51,27 @@ func NewSnapCmd(streams genericclioptions.IOStreams, version string) *cobra.Comm
 		},
 	}
 
-	cmd.Flags().BoolVarP(&o.force, "force", "f", o.force, "If true, do not prompt for confirmation")
-	cmd.Flags().CountVarP(&o.verbosity, "verbose", "v", "")
-	o.configFlags.AddFlags(cmd.Flags())
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", o.Namespace, "If present, the namespace scope for this CLI request")
+	cmd.Flags().BoolVarP(&o.Force, "force", "f", o.Force, "If true, do not prompt for confirmation")
+	cmd.Flags().CountVarP(&o.Verbosity, "verbose", "v", "Enable verbose output")
 
 	return cmd
 }
 
 func (o *SnapOptions) Run() error {
-	fmt.Fprintln(o.IOStreams.Out, "When I'm done, half of this cluster will still exist.")
-	fmt.Fprintln(o.IOStreams.Out, "Perfectly balanced, as all things should be... I hope they remember you.")
+	fmt.Fprintln(o.Out, "When I'm done, half of this cluster will still exist.")
+	fmt.Fprintln(o.Out, "Perfectly balanced, as all things should be... I hope they remember you.")
 
 	if !o.confirm() {
 		return fmt.Errorf("aborted by user")
 	}
 
-	fmt.Fprintln(o.IOStreams.Out, "Hold tight, little one...")
+	fmt.Fprintln(o.Out, "Hold tight, little one...")
 
-	config, err := o.configFlags.ToRESTConfig()
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, &clientcmd.ConfigOverrides{})
+
+	config, err := kubeConfig.ClientConfig()
 	if err != nil {
 		return err
 	}
@@ -80,7 +81,7 @@ func (o *SnapOptions) Run() error {
 		return err
 	}
 
-	pods, err := clientset.CoreV1().Pods(*o.configFlags.Namespace).List(context.TODO(), metav1.ListOptions{})
+	pods, err := clientset.CoreV1().Pods(o.Namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
@@ -97,11 +98,11 @@ func (o *SnapOptions) Run() error {
 		candidates[i], candidates[j] = candidates[j], candidates[i]
 	})
 
-	fmt.Fprintf(o.IOStreams.Out, "\n🤌🌟\n\n")
+	fmt.Fprintf(o.Out, "\n🤌🌟\n\n")
 
 	for _, pod := range candidates[:len(candidates)/2] {
-		if o.verbosity > 0 {
-			fmt.Fprintf(o.IOStreams.Out, "-- Deleting pod %s\n", pod.Name)
+		if o.Verbosity > 0 {
+			fmt.Fprintf(o.Out, "-- Deleting pod %s\n", pod.Name)
 		}
 		err = clientset.CoreV1().Pods(pod.Namespace).Delete(context.TODO(), pod.Name, metav1.DeleteOptions{})
 		if err != nil {
@@ -109,24 +110,24 @@ func (o *SnapOptions) Run() error {
 		}
 	}
 
-	fmt.Fprintln(o.IOStreams.Out, "Balance has been restored.")
+	fmt.Fprintln(o.Out, "Balance has been restored.")
 
 	return nil
 }
 
 func (o *SnapOptions) confirm() bool {
-	if o.force {
+	if o.Force {
 		return true
 	}
 
 	namespace := "every namespace"
-	if *o.configFlags.Namespace != "" {
-		namespace = fmt.Sprintf("namespace '%s'", *o.configFlags.Namespace)
+	if o.Namespace != "" {
+		namespace = fmt.Sprintf("namespace '%s'", o.Namespace)
 	}
 
-	fmt.Fprintf(o.IOStreams.Out, "\nThis will DELETE half the pods in %s\n", namespace)
-	fmt.Fprint(o.IOStreams.Out, "Are you sure? (y/N): ")
-	scanner := bufio.NewScanner(o.IOStreams.In)
+	fmt.Fprintf(o.Out, "\nThis will DELETE half the pods in %s\n", namespace)
+	fmt.Fprint(o.Out, "Are you sure? (y/N): ")
+	scanner := bufio.NewScanner(o.In)
 	return scanner.Scan() && strings.HasPrefix(strings.ToLower(scanner.Text()), "y")
 }
 

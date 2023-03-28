@@ -44,7 +44,7 @@ func NewSnapCmd(streams genericclioptions.IOStreams, version string) *cobra.Comm
 
 	cmd := &cobra.Command{
 		Use:          fmt.Sprintf(commandUse, "kubectl"),
-		Short:        "Delete half of the pods in a namespace or cluster",
+		Short:        "Delete half of the pods in a Kubernetes cluster or namespace",
 		Example:      fmt.Sprintf(commandExample, "kubectl"),
 		Version:      version,
 		SilenceUsage: true,

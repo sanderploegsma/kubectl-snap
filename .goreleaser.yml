@@ -15,6 +15,11 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    files:
+      - src: scripts/*
+        strip_parent: true
+        info:
+          mode: 0775
 checksum:
   name_template: "checksums.txt"
 snapshot:
@@ -37,3 +42,6 @@ brews:
       name: homebrew-tap
     description: Delete half of the pods in a Kubernetes cluster or namespace
     homepage: https://github.com/sanderploegsma/kubectl-snap
+    install: |
+      bin.install "kubectl-snap"
+      bin.install "kubectl_complete-snap"

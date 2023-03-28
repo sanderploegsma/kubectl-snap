@@ -31,11 +31,11 @@ Examples:
   kubectl snap -n kube-system
   
   # Snap pods in all namespaces without prompting for confirmation (USE WITH CAUTION)
-  kubectl snap -f
+  kubectl snap -F
 
 
 Flags:
-  -f, --force              If true, do not prompt for confirmation
+  -F, --force              If true, do not prompt for confirmation
   -h, --help               help for kubectl-snap
   -n, --namespace string   If present, the namespace scope for this CLI request
   -v, --verbose count      Enable verbose output

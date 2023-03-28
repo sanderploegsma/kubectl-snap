@@ -22,7 +22,7 @@ var commandExample = `
   %[1]s snap -n kube-system
   
   # Snap pods in all namespaces without prompting for confirmation (USE WITH CAUTION)
-  %[1]s snap -f
+  %[1]s snap -F
 `
 
 type SnapOptions struct {
@@ -52,7 +52,7 @@ func NewSnapCmd(in io.Reader, out io.Writer, version string) *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", o.Namespace, "If present, the namespace scope for this CLI request")
-	cmd.Flags().BoolVarP(&o.Force, "force", "f", o.Force, "If true, do not prompt for confirmation")
+	cmd.Flags().BoolVarP(&o.Force, "force", "F", o.Force, "If true, do not prompt for confirmation")
 	cmd.Flags().CountVarP(&o.Verbosity, "verbose", "v", "Enable verbose output")
 
 	return cmd

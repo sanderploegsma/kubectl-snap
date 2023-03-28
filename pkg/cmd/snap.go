@@ -39,13 +39,14 @@ func NewSnapOptions(streams genericclioptions.IOStreams) *SnapOptions {
 	}
 }
 
-func NewCmdSnap(streams genericclioptions.IOStreams) *cobra.Command {
+func NewSnapCmd(streams genericclioptions.IOStreams, version string) *cobra.Command {
 	o := NewSnapOptions(streams)
 
 	cmd := &cobra.Command{
 		Use:          fmt.Sprintf(commandUse, "kubectl"),
 		Short:        "Delete half of the pods in a namespace or cluster",
 		Example:      fmt.Sprintf(commandExample, "kubectl"),
+		Version:      version,
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			return o.Run()

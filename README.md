@@ -7,6 +7,16 @@ Perfectly balanced, as all things should be...
 `kubectl-snap` is a plugin for `kubectl` that deletes half of the pods in your Kubernetes cluster or namespace. 
 Inspired by https://github.com/honk-ci/kubectl-snap, but rewritten in Go.
 
+## Install
+
+To install, grab the latest release for your platform and place the binary somewhere in your `PATH`, or use one of the alternatives below:
+
+### Homebrew
+
+On macOS and Linux you can install using [Homebrew](https://brew.sh):
+
+    brew install sanderploegsma/tap/kubectl-snap
+
 ## Usage
 
 ```

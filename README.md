@@ -21,7 +21,7 @@ On macOS and Linux you can install using [Homebrew](https://brew.sh):
 
 ```
 Usage:
-  kubectl-snap [flags]
+  kubectl snap [flags]
 
 Examples:
 

@@ -10,12 +10,15 @@ import (
 // version can be automatically set by ldflags on build
 var version = "dev"
 
+func init() {
+	cmd.RootCmd.Version = version
+}
+
 func main() {
 	flags := pflag.NewFlagSet("kubectl-snap", pflag.ExitOnError)
 	pflag.CommandLine = flags
 
-	root := cmd.NewSnapCmd(os.Stdin, os.Stdout, version)
-	if err := root.Execute(); err != nil {
+	if err := cmd.RootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }

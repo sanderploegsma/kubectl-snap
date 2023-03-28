@@ -38,6 +38,6 @@ Flags:
   -F, --force              If true, do not prompt for confirmation
   -h, --help               help for kubectl-snap
   -n, --namespace string   If present, the namespace scope for this CLI request
-  -v, --verbose count      Enable verbose output
+  -v, --verbose            Enable verbose output
       --version            version for kubectl-snap
 ```

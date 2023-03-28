@@ -9,13 +9,15 @@ Inspired by https://github.com/honk-ci/kubectl-snap, but rewritten in Go.
 
 ## Install
 
-To install, grab the latest release for your platform and place the binary somewhere in your `PATH`, or use one of the alternatives below:
-
 ### Homebrew
 
 On macOS and Linux you can install using [Homebrew](https://brew.sh):
 
     brew install sanderploegsma/tap/kubectl-snap
+
+### Manual
+
+Grab the latest release for your platform and place the binaries somewhere in your `PATH`, like `/usr/local/bin`.
 
 ## Usage
 

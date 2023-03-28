@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# If we are completing a flag, use Cobra's builtin completion system.
+# To know if we are completing a flag we need the last argument starts with a `-` and does not contain an `=`
+args=("$@")
+lastArg=${args[((${#args[@]}-1))]}
+if [[ "$lastArg" == -* ]]; then
+   if [[ "$lastArg" != *=* ]]; then
+      kubectl snap __complete "$@"
+   fi
+else
+   # Turn off file completion.  See the ShellCompDirective documentation within
+   # https://github.com/spf13/cobra/blob/main/shell_completions.md#completion-of-nouns
+   echo :4
+fi

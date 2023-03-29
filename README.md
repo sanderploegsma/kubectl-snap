@@ -35,9 +35,12 @@ Examples:
 
 
 Flags:
-  -F, --force              If true, do not prompt for confirmation
-  -h, --help               help for kubectl-snap
-  -n, --namespace string   If present, the namespace scope for this CLI request
-  -v, --verbose            Enable verbose output
-      --version            version for kubectl-snap
+      --all                     If true, includes ALL Pods when snapping
+  -F, --force                   If true, do not prompt for confirmation
+  -h, --help                    help for kubectl-snap
+      --include-orphaned-pods   If true, includes orphaned Pods when snapping
+      --include-stopped-pods    If true, includes stopped Pods when snapping
+  -n, --namespace string        If present, the namespace scope for this CLI request
+  -v, --verbose                 Enable verbose output
+      --version                 version for kubectl-snap
 ```

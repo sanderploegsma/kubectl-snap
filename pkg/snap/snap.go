@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"golang.org/x/exp/slices"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -12,7 +13,9 @@ import (
 )
 
 type SnapOptions struct {
-	Namespace string
+	Namespace        string
+	SnapOrphanedPods bool
+	SnapStoppedPods  bool
 }
 
 // Snap deletes half the pods in a Kubernetes cluster and returns a list of pod names that were deleted.
@@ -61,10 +64,16 @@ func Snap(options *SnapOptions) (deleted []string, err error) {
 }
 
 func (o *SnapOptions) shouldSnapPod(pod v1.Pod) bool {
-	// Do not snap pods that are not owned by anything
-	if len(pod.OwnerReferences) == 0 {
+	// Do not snap pods that are not owned by anything unless instructed to
+	if !o.SnapOrphanedPods && len(pod.OwnerReferences) == 0 {
 		return false
 	}
 
-	return pod.Status.Phase == v1.PodRunning
+	snappablePhases := []v1.PodPhase{v1.PodRunning, v1.PodPending}
+
+	if o.SnapStoppedPods {
+		snappablePhases = append(snappablePhases, v1.PodFailed, v1.PodSucceeded)
+	}
+
+	return slices.Contains(snappablePhases, pod.Status.Phase)
 }

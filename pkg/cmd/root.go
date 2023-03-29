@@ -12,16 +12,18 @@ import (
 
 var (
 	// CLI flags
-	namespace string
-	force     bool
-	verbose   bool
+	namespace           string
+	force               bool
+	verbose             bool
+	includeOrphanedPods bool
+	includeStoppedPods  bool
 
 	example = `
   # Snap pods in the kube-system namespace
-  kubernetes snap -n kube-system
+  kubectl snap -n kube-system
   
   # Snap pods in all namespaces without prompting for confirmation (USE WITH CAUTION)
-  kubernetes snap -F
+  kubectl snap -F
 `
 
 	RootCmd = &cobra.Command{
@@ -39,6 +41,8 @@ func init() {
 	RootCmd.Flags().StringVarP(&namespace, "namespace", "n", namespace, "If present, the namespace scope for this CLI request")
 	RootCmd.Flags().BoolVarP(&force, "force", "F", force, "If true, do not prompt for confirmation")
 	RootCmd.Flags().BoolVarP(&verbose, "verbose", "v", verbose, "Enable verbose output")
+	RootCmd.Flags().BoolVar(&includeOrphanedPods, "include-orphaned-pods", includeOrphanedPods, "If true, also snap orphaned Pods")
+	RootCmd.Flags().BoolVar(&includeStoppedPods, "include-stopped-pods", includeStoppedPods, "If true, also snap stopped Pods")
 }
 
 func execute() error {
@@ -54,7 +58,11 @@ func execute() error {
 	fmt.Println("🤌🌟")
 	fmt.Println()
 
-	options := &snap.SnapOptions{Namespace: namespace}
+	options := &snap.SnapOptions{
+		Namespace:        namespace,
+		SnapOrphanedPods: includeOrphanedPods,
+		SnapStoppedPods:  includeStoppedPods,
+	}
 	deleted, err := snap.Snap(options)
 
 	if verbose {

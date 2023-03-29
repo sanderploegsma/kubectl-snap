@@ -12,11 +12,12 @@ import (
 
 var (
 	// CLI flags
-	namespace           string
+	all                 bool
 	force               bool
-	verbose             bool
 	includeOrphanedPods bool
 	includeStoppedPods  bool
+	namespace           string
+	verbose             bool
 
 	example = `
   # Snap pods in the kube-system namespace
@@ -38,11 +39,12 @@ var (
 )
 
 func init() {
-	RootCmd.Flags().StringVarP(&namespace, "namespace", "n", namespace, "If present, the namespace scope for this CLI request")
+	RootCmd.Flags().BoolVar(&all, "all", all, "If true, includes ALL Pods when snapping")
 	RootCmd.Flags().BoolVarP(&force, "force", "F", force, "If true, do not prompt for confirmation")
+	RootCmd.Flags().BoolVar(&includeOrphanedPods, "include-orphaned-pods", includeOrphanedPods, "If true, includes orphaned Pods when snapping")
+	RootCmd.Flags().BoolVar(&includeStoppedPods, "include-stopped-pods", includeStoppedPods, "If true, includes stopped Pods when snapping")
+	RootCmd.Flags().StringVarP(&namespace, "namespace", "n", namespace, "If present, the namespace scope for this CLI request")
 	RootCmd.Flags().BoolVarP(&verbose, "verbose", "v", verbose, "Enable verbose output")
-	RootCmd.Flags().BoolVar(&includeOrphanedPods, "include-orphaned-pods", includeOrphanedPods, "If true, also snap orphaned Pods")
-	RootCmd.Flags().BoolVar(&includeStoppedPods, "include-stopped-pods", includeStoppedPods, "If true, also snap stopped Pods")
 }
 
 func execute() error {
@@ -60,6 +62,7 @@ func execute() error {
 
 	options := &snap.SnapOptions{
 		Namespace:        namespace,
+		SnapAllPods:      all,
 		SnapOrphanedPods: includeOrphanedPods,
 		SnapStoppedPods:  includeStoppedPods,
 	}

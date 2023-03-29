@@ -14,6 +14,7 @@ import (
 
 type SnapOptions struct {
 	Namespace        string
+	SnapAllPods      bool
 	SnapOrphanedPods bool
 	SnapStoppedPods  bool
 }
@@ -64,6 +65,10 @@ func Snap(options *SnapOptions) (deleted []string, err error) {
 }
 
 func (o *SnapOptions) shouldSnapPod(pod v1.Pod) bool {
+	if o.SnapAllPods {
+		return true
+	}
+
 	// Do not snap pods that are not owned by anything unless instructed to
 	if !o.SnapOrphanedPods && len(pod.OwnerReferences) == 0 {
 		return false

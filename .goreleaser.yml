@@ -1,6 +1,9 @@
+version: 2
+
 before:
   hooks:
     - go mod tidy
+
 builds:
   - goos:
       - linux
@@ -8,6 +11,7 @@ builds:
       - darwin
     main: ./cmd/kubectl-snap.go
     binary: kubectl-snap
+
 archives:
   - format: tar.gz
     format_overrides:
@@ -18,16 +22,36 @@ archives:
         strip_parent: true
         info:
           mode: 0775
+
 checksum:
   name_template: "checksums.txt"
+
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
+
 changelog:
   sort: asc
+  use: github
+  groups:
+    - title: "Features"
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
+      order: 100
+    - title: "Security updates"
+      regexp: '^.*?sec(\(.+\))??!?:.+$'
+      order: 150
+    - title: "Bug fixes"
+      regexp: '^.*?fix(\(.+\))??!?:.+$'
+      order: 200
+    - title: "Dependency updates"
+      regexp: '^.*?deps(\(.+\))??!?:.+$'
+      order: 300
+    - title: Other
+      order: 9999
   filters:
     exclude:
       - "^docs:"
       - "^test:"
+
 release:
   github:
     owner: sanderploegsma

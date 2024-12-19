@@ -18,7 +18,7 @@ jobs:
       - name: Build
         run: go build -v ./...
       - name: Snapshot release
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
           version: "~> v2"

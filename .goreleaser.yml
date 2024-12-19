@@ -58,8 +58,7 @@ release:
     name: kubectl-snap
 
 brews:
-  - name: kubectl-snap
-    tap:
+  - repository:
       owner: sanderploegsma
       name: homebrew-tap
     description: Delete half of the pods in a Kubernetes cluster or namespace

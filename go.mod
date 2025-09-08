@@ -5,8 +5,8 @@ go 1.24.0
 toolchain go1.24.1
 
 require (
-	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.7
+	github.com/spf13/cobra v1.10.1
+	github.com/spf13/pflag v1.0.9
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	k8s.io/api v0.33.4
 	k8s.io/apimachinery v0.33.4

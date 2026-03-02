@@ -6,9 +6,9 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
-	k8s.io/api v0.35.1
-	k8s.io/apimachinery v0.35.1
-	k8s.io/client-go v0.35.1
+	k8s.io/api v0.35.2
+	k8s.io/apimachinery v0.35.2
+	k8s.io/client-go v0.35.2
 )
 
 require (

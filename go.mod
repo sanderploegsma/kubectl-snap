@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/spf13/pflag v1.0.10
+	github.com/spf13/pflag v1.1.0
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	k8s.io/api v0.36.3
 	k8s.io/apimachinery v0.36.3
